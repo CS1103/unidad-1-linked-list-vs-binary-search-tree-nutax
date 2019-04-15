@@ -3,15 +3,22 @@
 //
 
 #include "LinkedList.h"
+#include "Location.h"
+#include <iostream>
 #include <fstream>
 #include <sstream>
 
-UTEC::LinkedList::LinkedList() {
+//UTEC::LinkedList::LinkedList() {
 
-}
+//}
 
 UTEC::LinkedList::~LinkedList() {
+if (!is_empty()){clear(head);}
+}
 
+void UTEC::LinkedList::clear(UTEC::Node* no){
+if(no->next!=nullptr){clear(no->next);}
+if(no->next==nullptr){delete no;}
 }
 
 int UTEC::LinkedList::size() {
@@ -36,6 +43,14 @@ UTEC::Node *UTEC::LinkedList::get_tail() {
     return tail;
 }
 
+void UTEC::LinkedList::print() {
+    Node* actual = head;
+    while(actual != nullptr) {
+        std::cout<<actual->data.get_id()<<std::endl;
+        actual = actual->next;
+    }
+}
+
 void UTEC::LinkedList::add_head(const Location& data) {
     Node* temp = new Node(data);
     if (is_empty()) {
@@ -58,36 +73,52 @@ void UTEC::LinkedList::add_tail(const Location& data) {
     }
 }
 
-void UTEC::load_locations(UTEC::LinkedList *linked_list, std::string file_name) {
-    using namespace std;
-    ifstream inFile;
-    inFile.open(file_name);
-	string linea;
-    while (getline(inFile, linea)) {
-        string segmento[7];
-		int c = 0; //Ubicación en el string (linea)
-		for (int i = 0; i < 7; i++){
-			while (linea[c]){
-				if (linea[c]!= ','){
-					segmento[i]=segmento[i]+linea[c];//Se añade letra por letra
-					c++;
-				}else{
-					c++;
-					break;//Fin de la manipulación del segmento
-				}
-			}//Se guarda un segmento
-		}//Se guarda en un array de tipo string los 7 segmentos de una linea.
-		stringstream _id(segmento[0]);
-		stringstream _la(segmento[3]);
-		stringstream _lo(segmento[4]);
-		int id = 0;
-		double la = 0;
-		double lo = 0;
-		_id>>id;
-		_la>>la;
-		_lo>>lo;
-		Location l(id, segmento[1], segmento[2], la, lo, segmento[5], segmento[6]);
-        linked_list->add_tail(l); //Se añade al final de la lista enlazada la nueva (Location)
-    }//Fin de la lectura del archivo
+UTEC::Node *UTEC::LinkedList::search(int position_id) { 
+Node* temp = head;
+    while (temp!=nullptr){
+if (temp->data.get_id() == position_id ){
+break;
+}
+temp = temp->next;
+}
+if (temp->data.get_id() != position_id){std::cout<<"ID inexistente"<<std::endl; temp = nullptr;}
+return temp;
+}
 
+void UTEC::LinkedList::insert(int position, const Location& data) { 
+if (position<=UTEC::LinkedList::size()){
+Node* temp = head;
+Node* temp2 = new Node(data);
+int c = -1;
+    while (temp!=nullptr){
+if (position = c + 1){
+break;
+}
+c++;
+temp = temp->next;
+}
+temp2->next = temp->next;
+temp->next = temp2;
+}else{
+std::cout<<"ERROR: Position>Size";
+}
+}
+
+
+
+void UTEC::load_locations(UTEC::LinkedList *linked_list, std::string file_name) {
+    //using namespace UTEC;
+    std::ifstream inFile;
+    inFile.open(file_name);
+	std::string linea;
+	bool primero = true;
+    while (getline(inFile, linea)) {
+if (primero == false){
+        Location li(linea);
+        linked_list->add_tail(li); //Se añade al final de la lista enlazada la nueva (Location)
+	}else{
+	primero = false;
+	}
+    }//Fin de la lectura del archivo
+inFile.close();
 }

@@ -15,20 +15,14 @@ class Location {
     std::string line;
     std::string construction;
 public:
-    Location(
-            int position_id,
-            std::string state_code,
-            std::string county,
-            double latitude,
-            double longitude,
-            std::string line,
-            std::string construction);
+    Location(std::string linea);
+	int get_id(){return position_id;}
 
     // Declare los metodos que crea necesario
 
     // Cree que sea necesario agregar destructor, justifique
 
 };
-
+#include "Location.cpp"
 
 #endif //LINKEDLISTVSBINARYTREE_LOCATION_H
